@@ -1,0 +1,287 @@
+{
+  "name": "",
+  "tagType": "Provider",
+  "tags": [
+    {
+      "name": "PackagingLIne_1",
+      "tagType": "UdtInstance",
+      "tags": [
+        {
+          "name": "SelectedRecipeID",
+          "tagType": "AtomicTag",
+          "value": 3
+        },
+        {
+          "name": "RejectLimit",
+          "tagType": "AtomicTag",
+          "value": 1.8
+        },
+        {
+          "name": "TotalOEE",
+          "tagType": "AtomicTag"
+        },
+        {
+          "name": "PartialPcs",
+          "tagType": "AtomicTag",
+          "value": 0.35011962
+        },
+        {
+          "name": "TargetSpeed",
+          "tagType": "AtomicTag",
+          "value": 160.0
+        },
+        {
+          "name": "Quality",
+          "tagType": "AtomicTag"
+        },
+        {
+          "name": "RejectRecipe2",
+          "tagType": "AtomicTag",
+          "value": 11
+        },
+        {
+          "name": "GoodCount",
+          "tagType": "AtomicTag",
+          "value": 496
+        },
+        {
+          "name": "ActualSpeed",
+          "tagType": "AtomicTag"
+        },
+        {
+          "name": "GoodRecipe2",
+          "tagType": "AtomicTag",
+          "value": 8905
+        },
+        {
+          "name": "RejectCount",
+          "tagType": "AtomicTag",
+          "value": 216
+        },
+        {
+          "name": "GoodRecipe3",
+          "tagType": "AtomicTag",
+          "value": 270781
+        },
+        {
+          "name": "Availability",
+          "tagType": "AtomicTag"
+        },
+        {
+          "name": "Performance",
+          "tagType": "AtomicTag"
+        },
+        {
+          "name": "RejectRecipe3",
+          "tagType": "AtomicTag",
+          "value": 6769
+        },
+        {
+          "name": "State",
+          "tagType": "AtomicTag",
+          "value": 1
+        },
+        {
+          "name": "RejectRecipe1",
+          "tagType": "AtomicTag",
+          "value": 37
+        },
+        {
+          "name": "TotalCount",
+          "tagType": "AtomicTag"
+        },
+        {
+          "name": "SimulationTick",
+          "tagType": "AtomicTag"
+        },
+        {
+          "name": "GoodRecipe1",
+          "tagType": "AtomicTag",
+          "value": 1395
+        }
+      ],
+      "typeId": "UDT_PackagingLine"
+    },
+    {
+      "name": "_types_",
+      "tagType": "Folder",
+      "tags": [
+        {
+          "name": "UDT_PackagingLine",
+          "tagType": "UdtType",
+          "tags": [
+            {
+              "defaultValue": 0,
+              "expression": "case({[.]SelectedRecipeID},\r\n  1, {[.]GoodRecipe1},\r\n  2, {[.]GoodRecipe2},\r\n  3, {[.]GoodRecipe3},\r\n  0\r\n)",
+              "name": "GoodCount",
+              "tagType": "AtomicTag",
+              "value": 0,
+              "valueSource": "expr"
+            },
+            {
+              "eventScripts": [
+                {
+                  "eventid": "valueChanged",
+                  "script": "logger \u003d system.util.getLogger(\"PackagingLine\")\n\nparentPath \u003d \"[default]PackagingLine_1\"\ntagPaths \u003d [\n    parentPath + \"/State\", \n    parentPath + \"/ActualSpeed\", \n    parentPath + \"/SelectedRecipeID\", \n    parentPath + \"/PartialPcs\"\n]\nvals \u003d system.tag.readBlocking(tagPaths)\n\nrawState \u003d vals[0].value\nrawSpeed \u003d vals[1].value\nrawRecipe \u003d vals[2].value\nrawPartial \u003d vals[3].value\n\nlogger.info(\"TICK -\u003e State: %s | Speed: %s | RecipeID: %s\" % (str(rawState), str(rawSpeed), str(rawRecipe)))\n\nstate \u003d int(rawState) if rawState is not None else 0\nactualSpeed \u003d float(rawSpeed) if rawSpeed is not None else 0.0\nrecipeId \u003d int(rawRecipe) if rawRecipe is not None else 1\npartial \u003d float(rawPartial) if rawPartial is not None else 0.0\n\nif state \u003d\u003d 1:\n    producedThisSec \u003d (actualSpeed / 60.0) + partial\n    wholePcs \u003d int(producedThisSec)\n    newPartial \u003d producedThisSec - wholePcs\n\n    targetGoodTag \u003d \"%s/GoodRecipe%d\" % (parentPath, recipeId)\n    targetRejectTag \u003d \"%s/RejectRecipe%d\" % (parentPath, recipeId)\n    \n    counts \u003d system.tag.readBlocking([targetGoodTag, targetRejectTag])\n    good \u003d int(counts[0].value) if counts[0].value is not None else 0\n    reject \u003d int(counts[1].value) if counts[1].value is not None else 0\n\n    good +\u003d wholePcs\n\n    if wholePcs \u003e 0 and (good % 40) \u003c wholePcs:\n        reject +\u003d 1\n\n    system.tag.writeBlocking(\n        [targetGoodTag, targetRejectTag, parentPath + \"/PartialPcs\"],\n        [good, reject, newPartial]\n    )"
+                }
+              ],
+              "expression": "toInt(floor(toMillis(now(1000)) / 1000))",
+              "name": "SimulationTick",
+              "tagType": "AtomicTag",
+              "valueSource": "expr"
+            },
+            {
+              "defaultValue": 0,
+              "name": "GoodRecipe2",
+              "tagType": "AtomicTag",
+              "value": 0,
+              "valueSource": "memory"
+            },
+            {
+              "dataType": "Float4",
+              "expression": "if({[.]TargetSpeed} \u003e 0,\r\n    min(100.0, max(0.0, ({[.]ActualSpeed} * 100.0) / {[.]TargetSpeed})),\r\n    0.0\r\n)",
+              "historyEnabled": true,
+              "historyMaxAge": 1,
+              "historyMaxAgeUnits": "SEC",
+              "historyProvider": "MSSQL_Historian",
+              "historySampleRate": 2,
+              "name": "Performance",
+              "sampleMode": "Periodic",
+              "tagType": "AtomicTag",
+              "valueSource": "expr"
+            },
+            {
+              "dataType": "Float4",
+              "expression": "if({[.]State} \u003d 1,\r\n    {[.]TargetSpeed} + (sin(toMillis(now(1000)) / 2000.0) * 4.5),\r\n    0.0\r\n)",
+              "historyEnabled": true,
+              "historyMaxAge": 1,
+              "historyMaxAgeUnits": "SEC",
+              "historyProvider": "MSSQL_Historian",
+              "historySampleRate": 2,
+              "name": "ActualSpeed",
+              "sampleMode": "Periodic",
+              "tagType": "AtomicTag",
+              "valueSource": "expr"
+            },
+            {
+              "dataType": "Float4",
+              "expression": "round(\r\n    ({[.]Availability} * {[.]Performance} * {[.]Quality}) / 10000.0,\r\n    1\r\n)",
+              "name": "TotalOEE",
+              "tagType": "AtomicTag",
+              "valueSource": "expr"
+            },
+            {
+              "defaultValue": 0,
+              "name": "GoodRecipe3",
+              "tagType": "AtomicTag",
+              "value": 0,
+              "valueSource": "memory"
+            },
+            {
+              "defaultValue": 1,
+              "name": "SelectedRecipeID",
+              "tagType": "AtomicTag",
+              "value": 1,
+              "valueSource": "memory"
+            },
+            {
+              "defaultValue": 0,
+              "expression": "case({[.]SelectedRecipeID},\r\n  1, {[.]RejectRecipe1},\r\n  2, {[.]RejectRecipe2},\r\n  3, {[.]RejectRecipe3},\r\n  0\r\n)",
+              "name": "RejectCount",
+              "tagType": "AtomicTag",
+              "value": 0,
+              "valueSource": "expr"
+            },
+            {
+              "defaultValue": 0,
+              "name": "RejectRecipe3",
+              "tagType": "AtomicTag",
+              "value": 0,
+              "valueSource": "memory"
+            },
+            {
+              "dataType": "Float4",
+              "expression": "if({[.]TotalCount} \u003e 0,\r\n    ({[.]GoodCount} * 100.0) / {[.]TotalCount},\r\n    100.0\r\n)",
+              "name": "Quality",
+              "tagType": "AtomicTag",
+              "valueSource": "expr"
+            },
+            {
+              "dataType": "Float4",
+              "defaultValue": 120,
+              "name": "TargetSpeed",
+              "tagType": "AtomicTag",
+              "value": 120,
+              "valueSource": "memory"
+            },
+            {
+              "alarms": [
+                {
+                  "name": "PackagingFault",
+                  "priority": "High",
+                  "setpointA": 2.0,
+                  "timestampSource": "System"
+                }
+              ],
+              "defaultValue": 0,
+              "name": "State",
+              "tagType": "AtomicTag",
+              "value": 0,
+              "valueSource": "memory"
+            },
+            {
+              "dataType": "Float4",
+              "expression": "if({[.]State} \u003d 1, 100.0, 0.0)",
+              "name": "Availability",
+              "tagType": "AtomicTag",
+              "valueSource": "expr"
+            },
+            {
+              "dataType": "Float4",
+              "defaultValue": 0,
+              "name": "PartialPcs",
+              "tagType": "AtomicTag",
+              "value": 0,
+              "valueSource": "memory"
+            },
+            {
+              "defaultValue": 0,
+              "name": "RejectRecipe2",
+              "tagType": "AtomicTag",
+              "value": 0,
+              "valueSource": "memory"
+            },
+            {
+              "defaultValue": 0,
+              "name": "GoodRecipe1",
+              "tagType": "AtomicTag",
+              "value": 0,
+              "valueSource": "memory"
+            },
+            {
+              "defaultValue": 0,
+              "name": "RejectRecipe1",
+              "tagType": "AtomicTag",
+              "value": 0,
+              "valueSource": "memory"
+            },
+            {
+              "dataType": "Float4",
+              "defaultValue": 2.5,
+              "name": "RejectLimit",
+              "tagType": "AtomicTag",
+              "value": 2.5,
+              "valueSource": "memory"
+            },
+            {
+              "expression": "{[.]GoodCount} + {[.]RejectCount}",
+              "name": "TotalCount",
+              "tagType": "AtomicTag",
+              "valueSource": "expr"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
