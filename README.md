@@ -70,8 +70,8 @@ Aplikacja monitoruje parametry produkcyjne oraz stan pracy maszyny, wyliczając 
 
 ## Struktura projektu
 
-- `packaging_gif` - gif prezentujący dzialanie programu
-- `dashboard` - zrzut ekranu pulpitu operatorskiego i materiały demonstracyjne
+- `.dashboard` - zrzut ekranu pulpitu operatorskiego i materiały demonstracyjne
+- `.packaging_gif` - gif prezentujący dzialanie programu
 - `ignition_exports/` - eksport projektu (.zip) oraz definicje tagów i UDT (.json)
 - `scripts/` - kod źródłowy skryptu symulacji w Pythonie
 - `schema_and_recepies` - schemat tabel bazodanowych i dane startowe receptur
