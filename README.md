@@ -2,6 +2,8 @@
 
 ## EN/PL below.
 
+
+
 # [EN] Packaging Line SCADA / OEE System 
 
 Demo SCADA/MES dashboard for a packaging line built in Ignition 8.1 Perspective, connected to MS SQL Server.
@@ -27,18 +29,21 @@ The application monitors production metrics and line status to calculate real-ti
 
 ## Project Structure
 
-- `docs/` — dashboard screenshot and demo files
-- `ignition-exports/` — project zip and UDT/tag definitions (JSON)
-- `scripts/` — standalone Python simulation script
-- `sql/` — database schema and recipe seed data
+- `.dashboard` - dashboard screenshot and demo files
+- `.packaging_demo` - gif showcasing working programme
+- `ignition-exports/` - project zip and UDT/tag definitions (JSON)
+- `scripts/` - standalone Python simulation script
+- `schema_and_recepies` - database schema and recipe seed data
 
 ## Setup
 
 1. Run `sql/schema_and_recipes.sql` on your SQL Server instance.
 2. Add a database connection named `PackagingDB` in Ignition Gateway (`Config > Databases > Connections`).
-3. Import `ignition-exports/tags_export.json` in Tag Browser (`default` provider).
-4. Import `ignition-exports/packaging_project.zip` via Gateway Web UI (`Config > Projects > Import Project`).
+3. Import `ignition-exports/tags.json` in Tag Browser (`default` provider).
+4. Import `ignition-exports/Packaging_Proj.zip` via Gateway Web UI (`Config > Projects > Import Project`).
 5. Open the project in Perspective Workstation or browser.
+
+
 
 # [PL] System SCADA / OEE linii pakującej
 
@@ -65,15 +70,16 @@ Aplikacja monitoruje parametry produkcyjne oraz stan pracy maszyny, wyliczając 
 
 ## Struktura projektu
 
-- `docs/` — zrzut ekranu pulpitu operatorskiego i materiały demonstracyjne
-- `ignition-exports/` — eksport projektu (.zip) oraz definicje tagów i UDT (.json)
-- `scripts/` — kod źródłowy skryptu symulacji w Pythonie
-- `sql/` — schemat tabel bazodanowych i dane startowe receptur
+- `packaging_gif` - gif prezentujący dzialanie programu
+- `dashboard` - zrzut ekranu pulpitu operatorskiego i materiały demonstracyjne
+- `ignition_exports/` - eksport projektu (.zip) oraz definicje tagów i UDT (.json)
+- `scripts/` - kod źródłowy skryptu symulacji w Pythonie
+- `schema_and_recepies` - schemat tabel bazodanowych i dane startowe receptur
 
 ## Uruchomienie
 
 1. Wykonaj skrypt `sql/schema_and_recipes.sql` na instancji SQL Server.
 2. Skonfiguruj połączenie bazodanowe o nazwie `PackagingDB` w bramie Ignition (`Config > Databases > Connections`).
-3. Zaimportuj plik `ignition-exports/tags_export.json` w Tag Browserze (provider `default`).
-4. Zaimportuj projekt `ignition-exports/packaging_project.zip` przez Gateway Web UI (`Config > Projects > Import Project`).
+3. Zaimportuj plik `ignition-exports/tags.json` w Tag Browserze (provider `default`).
+4. Zaimportuj projekt `ignition-exports/Packaging_Proj.zip` przez Gateway Web UI (`Config > Projects > Import Project`).
 5. Otwórz projekt w Perspective Workstation lub w przeglądarce.
