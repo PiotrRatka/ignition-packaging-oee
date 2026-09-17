@@ -6,7 +6,7 @@ EN/PL below.
 
 # [EN] Packaging Line SCADA / OEE System 
 
-Demo SCADA/MES dashboard for a packaging line built in Ignition 8.1 Perspective, connected to MS SQL Server.
+Demo SCADA/MES dashboard for a packaging line built in Ignition 8.3 Perspective, connected to MS SQL Server.
 
 ## Overview
 
@@ -22,7 +22,7 @@ The application monitors production metrics and line status to calculate real-ti
 
 ## Stack
 
-- Ignition 8.1 Perspective
+- Ignition 8.3 Perspective
 - MS SQL Server (JDBC)
 - Python / Jython (Gateway Events)
 - User Defined Types (UDTs)
@@ -47,7 +47,7 @@ The application monitors production metrics and line status to calculate real-ti
 
 # [PL] System SCADA / OEE linii pakującej
 
-Aplikacja demonstracyjna SCADA/MES dla linii pakującej wykonana w Ignition 8.1 (Perspective) i zintegrowana z bazą MS SQL Server.
+Aplikacja demonstracyjna SCADA/MES dla linii pakującej wykonana w Ignition 8.3 (Perspective) i zintegrowana z bazą MS SQL Server.
 
 ## Opis projektu
 
@@ -63,7 +63,7 @@ Aplikacja monitoruje parametry produkcyjne oraz stan pracy maszyny, wyliczając 
 
 ## Stos technologiczny
 
-- Ignition 8.1 Perspective
+- Ignition 8.3 Perspective
 - MS SQL Server (połączenie JDBC)
 - Python / Jython (Gateway Events)
 - User Defined Types (struktury UDT)
