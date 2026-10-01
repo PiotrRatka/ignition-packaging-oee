@@ -1,85 +1,83 @@
-# ignition-packaging-oee
+# Packaging Line SCADA / OEE
 
-EN/PL below.
+*[EN] English below · [PL] Polska wersja niżej*
 
+![Dashboard demo](.packaging_demo.gif)
 
+## [EN] Overview
 
-# [EN] Packaging Line SCADA / OEE System 
+A demo SCADA/MES application for a packaging line, built in Ignition 8.3 Perspective and connected to MS SQL Server. It calculates OEE (Availability × Performance × Quality) in real time from the line state and the nominal parameters of the selected recipe.
 
-Demo SCADA/MES dashboard for a packaging line built in Ignition 8.3 Perspective, connected to MS SQL Server.
-
-## Overview
-
-The application monitors production metrics and line status to calculate real-time OEE (Availability, Performance, Quality). It includes recipe handling via SQL queries, tag historization, alarm management, and simulated telemetry driven by a Gateway script.
+The line is simulated: a Gateway Timer Script generates speed, piece counts and rejects. In a real deployment the same tags would come from a PLC through one of Ignition's device drivers (e.g. Allen-Bradley Logix over EtherNet/IP, or OPC UA).
 
 ## Features
 
-- **Real-Time OEE:** Continuous calculation of Availability, Performance, and Quality based on line state and speed setpoints.
-- **Recipe Management:** Format selection (500g, 1000g, 250g) pulls nominal speed and scrap limits from SQL Server via Named Queries.
-- **Historian & Trends:** Live and historical speed logging displayed on a Perspective Power Chart.
-- **Alarm Handling:** Alarm Status Table configured with priority filtering and acknowledgment workflow.
-- **Simulation Script:** Gateway Timer Script (1000 ms) generating speed oscillations, fractional piece counts, and scrap occurrences.
+- **Real-time OEE** — Availability, Performance and Quality calculated continuously from the line state and the recipe's nominal speed.
+- **Recipe management** — selecting a format (250 g, 500 g, 1000 g) loads its nominal speed and reject limit from SQL Server through Named Queries.
+- **Historian and trends** — actual line speed is historized and shown on a Perspective Power Chart.
+- **Alarms** — Alarm Status Table with priority filtering and acknowledgment.
+- **Line simulation** — Gateway Timer Script (1000 ms) producing speed variation and rejects. Fractional pieces are carried over between ticks, so the piece count stays correct at any speed.
+- **Data model** — the line is a UDT instance, so another line can be added by creating a new instance.
 
 ## Stack
 
 - Ignition 8.3 Perspective
 - MS SQL Server (JDBC)
-- Python / Jython (Gateway Events)
-- User Defined Types (UDTs)
+- Python / Jython (Gateway event scripts)
+- User Defined Types (UDT)
 
-## Project Structure
+## Repository structure
 
-- `.dashboard` - dashboard screenshot and demo files
-- `.packaging_demo` - gif showcasing working programme
-- `ignition-exports/` - project zip and UDT/tag definitions (JSON)
-- `scripts/` - standalone Python simulation script
-- `schema_and_recepies` - database schema and recipe seed data
+- `ignition_exports/Packaging_Proj.zip` — Ignition project export
+- `ignition_exports/tags.json` — tag and UDT definitions
+- `scripts/` — simulation script source (`Timer.py`; `SimulationTick.py` is the same logic with logging)
+- `schema_and_recipes.sql` — database schema (`Recipes`, `DowntimeLog`) and recipe seed data
+- `.dashboard.png`, `.packaging_demo.gif` — screenshot and demo animation
 
 ## Setup
 
-1. Run `sql/schema_and_recipes.sql` on your SQL Server instance.
-2. Add a database connection named `PackagingDB` in Ignition Gateway (`Config > Databases > Connections`).
-3. Import `ignition-exports/tags.json` in Tag Browser (`default` provider).
-4. Import `ignition-exports/Packaging_Proj.zip` via Gateway Web UI (`Config > Projects > Import Project`).
-5. Open the project in Perspective Workstation or browser.
+1. Run `schema_and_recipes.sql` on your SQL Server instance.
+2. In the Ignition Gateway, add a database connection named `PackagingDB` (**Config → Databases → Connections**).
+3. Import `ignition_exports/tags.json` in the Tag Browser (`default` provider).
+4. Import `ignition_exports/Packaging_Proj.zip` via the Gateway web UI (**Config → Projects → Import Project**).
+5. Open the project in a browser or in Perspective Workstation.
 
+---
 
+## [PL] Opis
 
-# [PL] System SCADA / OEE linii pakującej
+Demonstracyjna aplikacja SCADA/MES dla linii pakującej, wykonana w Ignition 8.3 Perspective i połączona z bazą MS SQL Server. Wylicza OEE (Dostępność × Wydajność × Jakość) w czasie rzeczywistym na podstawie stanu linii i parametrów nominalnych wybranej receptury.
 
-Aplikacja demonstracyjna SCADA/MES dla linii pakującej wykonana w Ignition 8.3 (Perspective) i zintegrowana z bazą MS SQL Server.
+Linia jest symulowana: Gateway Timer Script generuje prędkość, liczbę sztuk i odrzuty. W rzeczywistym wdrożeniu te same tagi pochodziłyby ze sterownika PLC przez jeden ze sterowników komunikacyjnych Ignition (np. Allen-Bradley Logix po EtherNet/IP albo OPC UA).
 
-## Opis projektu
+## Funkcje
 
-Aplikacja monitoruje parametry produkcyjne oraz stan pracy maszyny, wyliczając wskaźniki OEE (Dostępność, Wydajność, Jakość) w czasie rzeczywistym. Projekt obejmuje obsługę receptur przez zapytania SQL, archiwizację danych procesowych w Tag Historianie, obsługę alarmów oraz symulację telemetrii realizowaną przez Gateway Timer Script.
+- **OEE w czasie rzeczywistym** — ciągłe wyliczanie Dostępności, Wydajności i Jakości na podstawie stanu linii i prędkości nominalnej receptury.
+- **Receptury** — wybór formatu (250 g, 500 g, 1000 g) pobiera prędkość nominalną i limit odrzutów z SQL Server przez Named Queries.
+- **Archiwizacja i trendy** — rzeczywista prędkość linii jest archiwizowana i wyświetlana na wykresie Power Chart.
+- **Alarmy** — Alarm Status Table z filtrowaniem po priorytecie i potwierdzaniem.
+- **Symulacja linii** — Gateway Timer Script (1000 ms) generujący zmiany prędkości i odrzuty. Ułamkowe części sztuk są przenoszone między cyklami, więc licznik jest poprawny przy każdej prędkości.
+- **Model danych** — linia jest instancją UDT, więc kolejną linię dodaje się, tworząc nową instancję.
 
-## Funkcjonalności
-
-- **Wyliczanie OEE:** Ciągła kalkulacja Dostępności, Wydajności i Jakości na podstawie bieżącego stanu linii oraz parametrów nominalnych receptury.
-- **Zarządzanie recepturami:** Wybór formatu (500g, 1000g, 250g) pobiera prędkość zadaną oraz limit odrzutów z bazy SQL Server za pomocą Named Queries.
-- **Trendy i archiwizacja:** Rejestracja prędkości rzeczywistej w bazie danych i wizualizacja na komponencie Power Chart.
-- **Obsługa alarmów:** Komponent Alarm Status Table z podziałem na priorytety i obsługą potwierdzania zdarzeń awaryjnych.
-- **Skrypt symulacji:** Gateway Timer Script (1000 ms) generujący oscylacje prędkości, buforowanie części ułamkowych wyrobów oraz odrzuty jakościowe.
-
-## Stos technologiczny
+## Technologie
 
 - Ignition 8.3 Perspective
-- MS SQL Server (połączenie JDBC)
-- Python / Jython (Gateway Events)
-- User Defined Types (struktury UDT)
+- MS SQL Server (JDBC)
+- Python / Jython (skrypty zdarzeń Gateway)
+- User Defined Types (UDT)
 
-## Struktura projektu
+## Struktura repozytorium
 
-- `.dashboard` - zrzut ekranu pulpitu operatorskiego i materiały demonstracyjne
-- `.packaging_gif` - gif prezentujący dzialanie programu
-- `ignition_exports/` - eksport projektu (.zip) oraz definicje tagów i UDT (.json)
-- `scripts/` - kod źródłowy skryptu symulacji w Pythonie
-- `schema_and_recepies` - schemat tabel bazodanowych i dane startowe receptur
+- `ignition_exports/Packaging_Proj.zip` — eksport projektu Ignition
+- `ignition_exports/tags.json` — definicje tagów i UDT
+- `scripts/` — kod skryptu symulacji (`Timer.py`; `SimulationTick.py` to ta sama logika z logowaniem)
+- `schema_and_recipes.sql` — schemat bazy (`Recipes`, `DowntimeLog`) i dane startowe receptur
+- `.dashboard.png`, `.packaging_demo.gif` — zrzut ekranu i animacja demonstracyjna
 
 ## Uruchomienie
 
-1. Wykonaj skrypt `sql/schema_and_recipes.sql` na instancji SQL Server.
-2. Skonfiguruj połączenie bazodanowe o nazwie `PackagingDB` w bramie Ignition (`Config > Databases > Connections`).
-3. Zaimportuj plik `ignition-exports/tags.json` w Tag Browserze (provider `default`).
-4. Zaimportuj projekt `ignition-exports/Packaging_Proj.zip` przez Gateway Web UI (`Config > Projects > Import Project`).
-5. Otwórz projekt w Perspective Workstation lub w przeglądarce.
+1. Uruchom `schema_and_recipes.sql` na instancji SQL Server.
+2. W Ignition Gateway dodaj połączenie z bazą o nazwie `PackagingDB` (**Config → Databases → Connections**).
+3. Zaimportuj `ignition_exports/tags.json` w Tag Browserze (provider `default`).
+4. Zaimportuj `ignition_exports/Packaging_Proj.zip` przez interfejs WWW Gateway (**Config → Projects → Import Project**).
+5. Otwórz projekt w przeglądarce albo w Perspective Workstation.
